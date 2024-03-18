@@ -1,0 +1,38 @@
+﻿# services: 
+#   application:
+#     build:
+#       context: .
+#       dockerfile: ./Application/Dockerfile
+#     environment:
+#       - ASPNETCORE_ENVIRONMENT=Development
+#       - VIRTUAL_HOST=*.lighthouse.local
+#   proxy:
+#     image: nginxproxy/nginx-proxy
+#     ports:
+#       - "8080:80"
+#       - "443:443"
+#     volumes:
+#       - /var/run/docker.sock:/tmp/docker.sock:ro
+      # - ./lighthouse.local.crt:/etc/nginx/certs/lighthouse.local.crt:ro
+      # - ./lighthouse.local.key:/etc/nginx/certs/lighthouse.local.key:ro
+
+services:
+  application:
+    build:
+      context: .
+      dockerfile: ./Application/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - VIRTUAL_HOST=*.lighthouse.local
+
+  proxy:
+    image: httpd:latest  # Apache HTTP Server image
+    ports:
+      - "8080:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./lighthouse.local.crt:/usr/local/apache2/conf/server.crt:ro  # Mount SSL certificate
+      - ./lighthouse.local.key:/usr/local/apache2/conf/server.key:ro  # Mount SSL key
+
+
